@@ -1,0 +1,42 @@
+[
+    {
+        "name": "accenture",
+        "path": "/Companies/accenture.webp",
+        "id": 1
+    },
+    {
+        "name": "amazon",
+        "path": "/Companies/amazon.png",
+        "id": 2
+    },
+    {
+        "name": "apple",
+        "path": "/Companies/apple.png",
+        "id": 3
+    },
+    {
+        "name": "cisco",
+        "path": "/Companies/cisco.png",
+        "id": 4
+    },
+    {
+        "name": "FedEx",
+        "path": "/Companies/FedEx.jpg",
+        "id": 5
+    },
+    {
+        "name": "ibm",
+        "path": "/Companies/IBM.png",
+        "id": 6
+    },
+    {
+        "name": "samsung",
+        "path": "/Companies/Samsung.png",
+        "id": 7
+    },
+    {
+        "name": "sony",
+        "path": "/Companies/sony.png",
+        "id": 8
+    }
+]
