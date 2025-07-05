@@ -8,14 +8,22 @@ import {
 } from "../components/ui/carousel";
 
 import companies from "../data/companies.json";
+import faqs from "../data/faq.json";
 import Autoplay from "embla-carousel-autoplay";
 import BackgroundVideo from "./Video.jsx";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const LandingPage = () => {
   return (
     <main className="flex flex-col gap-10 sm:gap-20 py-10 sm:py-20">
       <section className="text-center">
-        <h1 className="flex flex-col items-center justify-center gradient-title text-4xl font-extrabold sm:text-6xl lg:text-8xl tracking-tighter py-4">
+        <h1 className="flex flex-col items-center justify-center gradient gradient-title text-4xl font-extrabold sm:text-6xl lg:text-8xl tracking-tighter py-4">
           Find Your Dream Job{" "}
           <span className="flex items-center gap-2 sm:gap-6">
             and get{" "}
@@ -57,25 +65,52 @@ const LandingPage = () => {
       </Carousel>
 
       {/* banner */}
-      <div className="flex w-full h-screen">
-        {/* Left: Video */}
-        <div className="w-1/2 h-full">
-          <BackgroundVideo />
-        </div>
 
-        {/* Right: Image */}
-        {/* <div className="w-1/2 h-full">
+      {/* Left: Video */}
+      <div className="w-1/2 h-full">
+        <BackgroundVideo />
+      </div>
+
+      {/* Right: Image */}
+      {/* <div className="w-1/2 h-full">
           <img
             src="/banner.jpg"
             alt="banner"
             className="w-full h-full object-cover"
           />
         </div> */}
-      </div>
 
-      <section>{/* cards */}</section>
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card>
+          <CardHeader>
+            <CardTitle>For Job Seekers</CardTitle>
+          </CardHeader>
+          <CardContent>
+            Search and apply for jobs, track application, and more.
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>For Employers</CardTitle>
+          </CardHeader>
+          <CardContent>
+            Post jobs, manage application, and find the best candidates.
+          </CardContent>
+        </Card>
+      </section>
 
       {/* Accordion */}
+
+      <Accordion type="single" collapsible>
+        {faqs.map((faq, index) => {
+          return (
+            <AccordionItem key={index} value={`item-${index + 1}`}>
+              <AccordionTrigger>{faq.question}</AccordionTrigger>
+              <AccordionContent>{faq.answer}</AccordionContent>
+            </AccordionItem>
+          );
+        })}
+      </Accordion>
     </main>
   );
 };

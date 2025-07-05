@@ -116,7 +116,7 @@
   }
 
   .gradient-title {
-    @apply gradient text-transparent bg-clip-text;
+    @apply text-transparent bg-clip-text;
   }
 }
 
