@@ -1,33 +1,92 @@
-import { useEffect } from "react";
-import { useSession } from "@clerk/clerk-react";
+import { useEffect, useState } from "react";
 import { getJobs } from "@/api/apiJobs";
 import useFetch from "@/hooks/use-fetch";
+import { useUser } from "@clerk/clerk-react";
+import { BarLoader } from "react-spinners";
+import JobCard from "@/components/job-card";
+import { getCompanies } from "@/api/apiCompanies";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 const JobListing = () => {
-  const { session, isLoaded } = useSession();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [location, setLocation] = useState("");
+  const [company_id, setCompany_id] = useState("");
+  const { isLoaded } = useUser();
 
   const {
     fn: fnJobs,
-    data: dataJobs,
+    data: jobs,
     loading: loadingJobs,
-    error: errorJobs,
-  } = useFetch(getJobs);
+  } = useFetch(getJobs, { location, company_id, searchQuery });
+
+  const { fn: fnCompanies, data: companies } = useFetch(getCompanies);
 
   useEffect(() => {
-    const fetchJobs = async () => {
-      if (!isLoaded || !session) return;
+    if (isLoaded) fnCompanies();
+  }, [isLoaded]);
 
-      const token = await session.getToken({ template: "supabase" });
+  useEffect(() => {
+    if (isLoaded) fnJobs();
+  }, [isLoaded, location, company_id, searchQuery]);
 
-      fnJobs(token); // ✅ pass the token to your getJobs call
-    };
+  const handleSearch = () => {
+    e.preventDefault();
+    let formData = new FormData(e.target);
 
-    fetchJobs();
-  }, [isLoaded, session]);
+    const query = formData.get("search-query");
+    if (query) setSearchQuery(query);
+  };
 
-  console.log("dataJobs:", dataJobs);
+  if (!isLoaded) {
+    return <BarLoader className="mb-4" width={"100%"} color="#36d7b7" />;
+  }
 
-  return <div>Job Listing...</div>;
+  return (
+    <div>
+      <h1 className="gradient gradient-title text-6xl font-extrabold sm:text-7xl text-center pb-8">
+        Latest Jobs
+      </h1>
+
+      {/* Add Filters here */}
+      <form
+        onSubmit={handleSearch}
+        className="h-14 flex w-full gap-2 items-center mb-3"
+      >
+        <Input
+          type="text"
+          placeholder="Search Jobs by Title..."
+          name="search-query"
+          className="h-full flex-1 px-4 text-md"
+        />
+        <Button type="submit" className="h-full sm:w-28" variant="blue">
+          Search
+        </Button>
+      </form>
+
+      {loadingJobs && (
+        <BarLoader className="mt-4" width={"100%"} color="#36d7b7" />
+      )}
+
+      {loadingJobs === false && (
+        <div className="mt-8 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {jobs?.length ? (
+            jobs.map((job) => {
+              return (
+                <JobCard
+                  key={job.id}
+                  job={job}
+                  savedInit={job?.saved?.length > 0}
+                />
+              );
+            })
+          ) : (
+            <p>No Jobs Found</p>
+          )}
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default JobListing;
