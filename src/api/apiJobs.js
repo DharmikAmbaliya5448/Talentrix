@@ -5,7 +5,7 @@ export async function getJobs(token, { location, company_id, searchQuery }) {
 
   let query = supabase.from("jobs").select(`
   *,
-  company:comapnies(name, logo_url),
+  company:companies(name, logo_url),
   saved:saved-jobs!saved-jobs_job_id_fkey(id, user_id)
 `);
 
@@ -57,7 +57,7 @@ export async function saveJobs(token, { alreadySaved }, saveData) {
 
   //   const { data, error } = await supabase.from("jobs").select(`
   //   *,
-  //   company:comapnies(name, logo_url),
+  //   company:companies(name, logo_url),
   //   saved:saved-jobs!saved-jobs_job_id_fkey(id, user_id)
   // `);
 
@@ -66,4 +66,41 @@ export async function saveJobs(token, { alreadySaved }, saveData) {
   //   return null;
   // }
   // return data;
+}
+
+export async function getSingleJob(token, { job_id }) {
+  const supabase = await supabaseClinet(token);
+
+  const { data, error: error } = await supabase
+    .from("jobs")
+    .select("*, company:companies(name, logo_url), application: application(*)")
+    .eq("id", job_id)
+    .single();
+
+  if (error) {
+    console.log("Error Fetching Job:", error);
+    return null;
+  }
+  return data;
+}
+
+export async function updateHiringStatus(token, { job_id, isOpen }) {
+  // if (typeof isOpen !== "boolean") {
+  //   console.error("isOpen must be boolean");
+  //   return null;
+  // }
+
+  const supabase = await supabaseClinet(token);
+
+  const { data, error } = await supabase
+    .from("jobs")
+    .update({ isOpen })
+    .eq("id", job_id)
+    .select();
+
+  if (error) {
+    console.log("Error Updating Job:", error);
+    return null;
+  }
+  return data;
 }
