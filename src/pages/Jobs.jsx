@@ -1,4 +1,6 @@
 import { getSingleJob, updateHiringStatus } from "@/api/apiJobs";
+import ApplicationCard from "@/components/application-card";
+import ApplyJobDrawer from "@/components/apply-job";
 import {
   Select,
   SelectContent,
@@ -27,12 +29,16 @@ const JobPage = () => {
     job_id: id,
   });
 
-  const { loading: loadingHiringStatus, fn: fnhiringStatus } =
-    useFetch(updateHiringStatus);
+  const { loading: loadingHiringStatus, fn: fnhiringStatus } = useFetch(
+    updateHiringStatus,
+    {
+      job_id: id,
+    }
+  );
 
   const handleStatusChange = (value) => {
     const isOpen = value === "open";
-    fnhiringStatus({ job_id: id, isOpen }).then(() => fnJob());
+    fnhiringStatus(isOpen).then(() => fnJob());
   };
 
   useEffect(() => {
@@ -74,10 +80,11 @@ const JobPage = () => {
       </div>
       {/* Hiring Status */}
 
+      {loadingHiringStatus && <BarLoader width={"100%"} color="#36d7b7" />}
       {job?.recruiter_id === user?.id && (
         <Select onValueChange={handleStatusChange}>
           <SelectTrigger
-            className={`w-full ${job?.isOpen ? "bg-green-500" : "bg-red-950"}`}
+            className={`w-full ${job?.isOpen ? "bg-green-950" : "bg-red-950"}`}
           >
             <SelectValue
               placeholder={
@@ -106,6 +113,25 @@ const JobPage = () => {
       />
 
       {/* Render Applications */}
+      {job?.recruiter_id !== user?.id && (
+        <ApplyJobDrawer
+          job={job}
+          user={user}
+          fetchJob={fnJob}
+          applied={job?.application?.find((ap) => ap.candidate_id === user?.id)}
+        />
+      )}
+
+      {job?.application?.length > 0 && job?.recruiter_id === user?.id && (
+        <div className="flex flex-col gap-2">
+          <h2 className="text-2xl sm:text-3xl font-bold">Applications</h2>
+          {job?.application?.map((application) => {
+            return (
+              <ApplicationCard key={application.id} application={application} />
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };

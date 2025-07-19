@@ -84,12 +84,7 @@ export async function getSingleJob(token, { job_id }) {
   return data;
 }
 
-export async function updateHiringStatus(token, { job_id, isOpen }) {
-  // if (typeof isOpen !== "boolean") {
-  //   console.error("isOpen must be boolean");
-  //   return null;
-  // }
-
+export async function updateHiringStatus(token, { job_id }, isOpen) {
   const supabase = await supabaseClinet(token);
 
   const { data, error } = await supabase
