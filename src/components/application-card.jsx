@@ -1,5 +1,11 @@
-import { Download } from "lucide-react";
-import { Card, CardHeader, CardTitle } from "./ui/card";
+import { Boxes, BriefcaseBusiness, Download, School } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
 
 const ApplicationCard = ({ application, isCandidate = false }) => {
   const handleDownload = () => {
@@ -23,6 +29,32 @@ const ApplicationCard = ({ application, isCandidate = false }) => {
           />
         </CardTitle>
       </CardHeader>
+      <CardContent className="flex flex-col gap-4 flex-1">
+        <div className="flex flex-col md:flex-row justify-between">
+          <div className="flex gap-2 items-center">
+            <BriefcaseBusiness size={15} /> {application?.experience} years of
+            experience
+          </div>
+          <div className="flex gap-2 items-center">
+            <School size={15} /> {application?.education}
+          </div>
+          <div className="flex gap-2 items-center">
+            <Boxes size={15} />
+            Skills: {application?.skills}
+          </div>
+        </div>
+        <hr />
+      </CardContent>
+      <CardFooter className="flex justify-between">
+        <span>{new Date(application?.created_at).toLocaleString()}</span>
+        {!isCandidate ? (
+          <span className="capitalize font-bold">
+            Status: {application?.status}
+          </span>
+        ) : (
+          <></>
+        )}
+      </CardFooter>
     </Card>
   );
 };

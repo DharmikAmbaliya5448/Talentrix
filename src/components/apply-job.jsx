@@ -19,7 +19,7 @@ import useFetch from "@/hooks/use-fetch";
 import { applyToJob } from "@/api/apiApplications";
 import { BarLoader } from "react-spinners";
 
-const schema = z.object({
+const schema = z.object({ 
   experience: z
     .number()
     .min(0, { message: "Experience must be at least 0" })
