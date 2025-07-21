@@ -16,11 +16,9 @@ export async function applyToJob(token, _, jobData) {
   }
 
   const resume = `${supabaseUrl}/storage/v1/object/public/resumes/${fileName}`;
- 
+
   console.log(supabaseUrl);
   console.log(resume);
-
-  
 
   const { data, error } = await supabase
     .from("application")
@@ -34,6 +32,22 @@ export async function applyToJob(token, _, jobData) {
 
   if (error) {
     console.log("Error Submitting Application:", error);
+    return null;
+  }
+  return data;
+}
+
+export async function updateApplicationStatus(token, { job_id }, status) {
+  const supabase = await supabaseClinet(token);
+
+  const { data, error } = await supabase
+    .from("applications")
+    .update({ status })
+    .eq("job_id", job_id)
+    .select("*");
+
+  if (error || data.length === 0) {
+    console.log("Error Updating Application Status:", error);
     return null;
   }
   return data;

@@ -6,6 +6,16 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
+import { updateApplicationStatus } from "@/api/apiApplications";
+import useFetch from "@/hooks/use-fetch";
+import { BarLoader } from "react-spinners";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 
 const ApplicationCard = ({ application, isCandidate = false }) => {
   const handleDownload = () => {
@@ -15,8 +25,20 @@ const ApplicationCard = ({ application, isCandidate = false }) => {
     link.click();
   };
 
+  const { loading: loadingHiringStatus, fn: fnhiringStatus } = useFetch(
+    updateApplicationStatus,
+    {
+      job_id: application?.job?.id,
+    }
+  );
+
+  const handleStatusChange = (status) => {
+    fnhiringStatus(status);
+  };
+
   return (
     <Card>
+      {loadingHiringStatus && <BarLoader width={"100%"} color="#36d7b7" />}
       <CardHeader>
         <CardTitle className="flex justify-between font-bold">
           {isCandidate
@@ -47,12 +69,25 @@ const ApplicationCard = ({ application, isCandidate = false }) => {
       </CardContent>
       <CardFooter className="flex justify-between">
         <span>{new Date(application?.created_at).toLocaleString()}</span>
-        {!isCandidate ? (
+        {isCandidate ? (
           <span className="capitalize font-bold">
             Status: {application?.status}
           </span>
         ) : (
-          <></>
+          <Select
+            onValueChange={handleStatusChange}
+            defaultValue={application?.status}
+          >
+            <SelectTrigger className="w-52">
+              <SelectValue placeholder="Application Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="applied">Aplied</SelectItem>
+              <SelectItem value="interviewing">Interviewing</SelectItem>
+              <SelectItem value="hired">Hired</SelectItem>
+              <SelectItem value="rejected">Rejected</SelectItem>
+            </SelectContent>
+          </Select>
         )}
       </CardFooter>
     </Card>
